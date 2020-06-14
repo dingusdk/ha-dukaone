@@ -1,0 +1,9 @@
+set_mode:
+  description: Sets duka fan mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to set
+      example: "fan.dukeone"
+    mode:
+      description: Mode in,out,inout
+      example: "inout"

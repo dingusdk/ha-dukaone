@@ -1,0 +1,23 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+        },
+        "error": {
+            "cannot_connect": "Cannot not connect to the Duka one device",
+            "unknown": "Unknown error"
+        },
+        "step": {
+            "user": {
+                "description": "You can find the Device Id in the Duka One App.",
+                "data": {
+                    "device_id": "Device Id",
+                    "password": "Password",
+                    "ip_address": "IP Address",
+                    "static_ip": "Static IP"
+                }
+            }
+        }
+    },
+    "title": "Duka One"
+}

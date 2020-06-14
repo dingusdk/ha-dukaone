@@ -1,0 +1,20 @@
+{
+  "codeowners": [
+    "@dingusdk"
+  ],
+  "dependencies": [
+    "frontend",
+    "lovelace"
+  ],
+  "domain": "dukaone",
+  "homeassistant": "0.110.0",
+  "name": "Duka One",
+  "config_flow": true,
+  "ssdp": [],
+  "zeroconf": [],
+  "homekit": {},
+  "documentation": "https://www.dingus.dk",
+  "requirements": [
+    "dukaonesdk==0.9.4"
+  ]
+}
