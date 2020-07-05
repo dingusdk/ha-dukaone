@@ -11,12 +11,6 @@ configurator:
 http:
 api:
 
-# fan:
-#   - platform: dukaone
-#     device_id: !secret device_id
-#     password: 1111
-#     name: DukaOneTest
-#     ip_address: '192.168.1.38'
-
 ptvsd:
   wait: True # Set to True if you want hass to break and wait for debugger to attach
+

@@ -4,7 +4,8 @@
   ],
   "dependencies": [
     "frontend",
-    "lovelace"
+    "lovelace",
+    "fan"
   ],
   "domain": "dukaone",
   "homeassistant": "0.110.0",
@@ -15,6 +16,6 @@
   "homekit": {},
   "documentation": "https://www.dingus.dk",
   "requirements": [
-    "dukaonesdk==0.9.4"
+    "dukaonesdk==0.9.7"
   ]
 }

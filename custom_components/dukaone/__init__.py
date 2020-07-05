@@ -6,7 +6,6 @@ see http://www.dingus.dk for more information
 import asyncio
 import logging
 import voluptuous as vol
-from datetime import timedelta
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_DEVICE_ID,
@@ -21,31 +20,17 @@ from homeassistant.helpers.entity_component import EntityComponent
 from dukaonesdk.dukaclient import DukaClient
 
 from .const import ATTR_MODE, DOMAIN
-from .fan import DukaOneFan
 
 _LOGGER = logging.getLogger(__name__)
 
 CONFIG_SCHEMA = vol.Schema({DOMAIN: vol.Schema({})}, extra=vol.ALLOW_EXTRA)
 
-SCAN_INTERVAL = timedelta(seconds=30)
 
-VALID_MODE = vol.Any(
-    vol.All(vol.Coerce(int), vol.Clamp(min=0, max=2)),
-    cv.string
-)
-SET_MODE_SCHEMA = {ATTR_MODE: VALID_MODE}
-
-
-
-async def async_setup(hass: HomeAssistant, config: dict):
+def setup(hass: HomeAssistant, config: dict):
     """Set up the Duka One component."""
 
-    component = hass.data[DOMAIN] = EntityComponent(
-        _LOGGER, DOMAIN, hass, SCAN_INTERVAL
-    )
-    component.async_register_entity_service(
-        "set_mode", SET_MODE_SCHEMA, async_service_set_mode
-    )
+    if not DOMAIN in hass.data:
+        hass.data[DOMAIN] = DukaEntityComponent(hass)
     return True
 
 
@@ -55,7 +40,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     # hass.data[DOMAIN][entry.entry_id] = MyApi(...)
 
-    device_id = entry.data[CONF_DEVICE_ID]
     hass.async_create_task(
         hass.config_entries.async_forward_entry_setup(entry, 'fan')
     )
@@ -75,8 +59,14 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     return unload_ok
 
 
-async def async_service_set_mode(device, call):
-    """Handle the set_mode service call."""
-    mode = call.data.get(ATTR_MODE, 1)
-    device.set_mode(mode)
-    return True
+class DukaEntityComponent(EntityComponent):
+
+    def __init__(self, hass):
+        super(DukaEntityComponent, self).__init__(_LOGGER, DOMAIN, hass)
+        self._the_client = None
+
+    @property
+    def the_client(self) -> DukaClient:
+        if self._the_client is None:
+            self._the_client = DukaClient()
+        return self._the_client
