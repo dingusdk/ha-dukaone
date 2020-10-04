@@ -8,6 +8,10 @@ To use it, the easist way is to install it with [HACS](https://hacs.xyz). Add th
 
 Without HACS you will have to place the custom_components folder in your HA configuration folder.
 
+To add a duka one to Home assistant go to configuration|Integrations and click the "+" in the lower right corner. Then find the "Duka One" in the list.
+
+In the dialog enter a name for the device and the device id. You can find the device id in the mobile app for Duka One. If you know the IP of the device you can enter it. Or you can enter the broardcast address of your subnet (like 192.168.0.255). You can also leave it empty and the integration will try to broadcast and find the device. (Note this does not always works - depending on you network and Home Assistant setup). 
+
 ## License
 
 HA-DukeOne is free software: you can redistribute it and/or modify
