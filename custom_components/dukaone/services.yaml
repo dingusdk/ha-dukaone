@@ -2,8 +2,14 @@ set_mode:
   description: Sets duka fan mode.
   fields:
     entity_id:
-      description: Name(s) of the entities to set
+      description: Name of the entity to set
       example: "fan.dukeone"
     mode:
       description: Mode in,out,inout
       example: "inout"
+reset_filter_timer:
+  description: Reset the filter timer to 90 days
+  fields:
+    entity_id:
+      description: Name of the entity to reset
+      example: "fan.dukeone"

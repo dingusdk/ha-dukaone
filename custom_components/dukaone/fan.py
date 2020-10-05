@@ -57,6 +57,9 @@ SET_MODE_SCHEMA = vol.Schema({
     vol.Required(ATTR_ENTITY_ID): cv.entity_ids,
     vol.Required(ATTR_MODE): VALID_MODE
 })
+RESET_FILTER_TIMER_SCHEMA = vol.Schema({
+    vol.Required(ATTR_ENTITY_ID): cv.entity_ids
+})
 
 
 
@@ -90,6 +93,9 @@ async def async_setup_entry(
     platform = entity_platform.current_platform.get()
     platform.async_register_entity_service(
         "set_mode", SET_MODE_SCHEMA,"set_mode"
+    )
+    platform.async_register_entity_service(
+        "reset_filter_timer", RESET_FILTER_TIMER_SCHEMA,"reset_filter_timer"
     )
 
 
@@ -186,7 +192,11 @@ class DukaOneFan(FanEntity):
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
-        return {"mode": self.mode}
+        return {
+            "mode": self.mode,
+            "filter_alarm": self._device.filter_alarm,
+            "filter_timer": self._device.filter_timer
+            }
 
     @property
     def speed(self):
@@ -237,6 +247,11 @@ class DukaOneFan(FanEntity):
         This method is a coroutine.
         """
         self.the_client.turn_off(self._device)
+        return
+
+    def reset_filter_timer(self):
+        """REset the filter timer to 90 days"""
+        self.the_client.reset_filter_alarm(self._device)
         return
 
     @property
