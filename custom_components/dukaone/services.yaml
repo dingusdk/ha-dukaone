@@ -3,7 +3,7 @@ set_mode:
   fields:
     entity_id:
       description: Name of the entity to set
-      example: "fan.dukeone"
+      example: "fan.dukaone"
     mode:
       description: Mode in,out,inout
       example: "inout"
@@ -12,4 +12,13 @@ reset_filter_timer:
   fields:
     entity_id:
       description: Name of the entity to reset
-      example: "fan.dukeone"
+      example: "fan.dukaone"
+set_manual_speed:
+  description: Set the fan speed manaually
+  fields:
+    entity_id:
+      description: Name of the entity to reset
+      example: "fan.dukaone"
+    manual_speed:
+      description: Manual speed 0-255
+      example: 100

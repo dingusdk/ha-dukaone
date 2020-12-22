@@ -16,6 +16,6 @@
   "homekit": {},
   "documentation": "https://www.dingus.dk",
   "requirements": [
-    "dukaonesdk==0.9.8"
+    "dukaonesdk==1.0.0"
   ]
 }

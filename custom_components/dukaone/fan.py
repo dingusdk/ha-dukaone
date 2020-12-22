@@ -16,8 +16,6 @@ from homeassistant.components.fan import (
     SPEED_MEDIUM,
     SPEED_OFF,
     SUPPORT_SET_SPEED,
-    SUPPORT_OSCILLATE,
-    SUPPORT_DIRECTION,
     FanEntity,
 )
 from homeassistant.config_entries import ConfigEntry
@@ -36,7 +34,14 @@ from dukaonesdk.device import Device, Mode, Speed
 from dukaonesdk.dukaclient import DukaClient
 
 from . import DukaEntityComponent
-from .const import ATTR_MODE, DOMAIN, MODE_IN, MODE_INOUT, MODE_OUT
+from .const import (
+    ATTR_MANUAL_SPEED,
+    ATTR_MODE,
+    DOMAIN,
+    MODE_IN,
+    MODE_INOUT,
+    MODE_OUT,SPEED_MANUAL
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -59,6 +64,10 @@ SET_MODE_SCHEMA = vol.Schema({
 })
 RESET_FILTER_TIMER_SCHEMA = vol.Schema({
     vol.Required(ATTR_ENTITY_ID): cv.entity_ids
+})
+SET_MANUAL_SPEED_SCHEMA = vol.Schema({
+    vol.Required(ATTR_ENTITY_ID): cv.entity_ids,
+    vol.Required(ATTR_MANUAL_SPEED): int
 })
 
 
@@ -97,6 +106,9 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         "reset_filter_timer", RESET_FILTER_TIMER_SCHEMA,"reset_filter_timer"
     )
+    platform.async_register_entity_service(
+        "set_manual_speed", SET_MANUAL_SPEED_SCHEMA,"set_manual_speed"
+    )
 
 
 class DukaOneFan(FanEntity):
@@ -132,6 +144,8 @@ class DukaOneFan(FanEntity):
             self._speed = SPEED_MEDIUM
         elif device.speed == Speed.HIGH:
             self._speed = SPEED_HIGH
+        elif device.speed == Speed.MANUAL:
+            self._speed = SPEED_MANUAL
         else:
             self._speed = SPEED_OFF
         self._state = ((int)(device.speed)) != 0
@@ -182,7 +196,7 @@ class DukaOneFan(FanEntity):
     @property
     def speed_list(self) -> list:
         """Get the list of available speeds."""
-        return [SPEED_OFF, SPEED_LOW, SPEED_MEDIUM, SPEED_HIGH]
+        return [SPEED_OFF, SPEED_LOW, SPEED_MEDIUM, SPEED_HIGH, SPEED_MANUAL]
 
     @property
     def supported_features(self) -> int:
@@ -216,6 +230,8 @@ class DukaOneFan(FanEntity):
             self.the_client.set_speed(self._device, Speed.LOW)
         elif speed == SPEED_OFF:
             self.the_client.set_speed(self._device, Speed.OFF)
+        elif speed == SPEED_MANUAL:
+            self.the_client.set_speed(self._device, Speed.MANUAL)
 
     @property
     def mode(self):
@@ -250,8 +266,13 @@ class DukaOneFan(FanEntity):
         return
 
     def reset_filter_timer(self):
-        """REset the filter timer to 90 days"""
+        """Reset the filter timer to 90 days"""
         self.the_client.reset_filter_alarm(self._device)
+        return
+
+    def set_manual_speed(self, manual_speed: int):
+        """Set the manual fan speed"""
+        self.the_client.set_manual_speed(self._device, manual_speed)
         return
 
     @property

@@ -1,15 +1,14 @@
-// See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
   "name": "DukaOne",
-  "image": "ludeeus/devcontainer:integration",
+  "image": "ludeeus/container:integration",
   "context": "..",
+  "postCreateCommand": "",
   "runArgs": [],
   "appPort": [
     "4000:4000/udp",
     "4001:4001/udp",
     "8123:8123"
   ],
-  "postCreateCommand": "dc install",
   "settings": {
     "files.eol": "\n",
     "editor.tabSize": 2,
@@ -24,16 +23,17 @@
   },
   "extensions": [
     "ms-python.python",
-    "visualstudioexptteam.vscodeintellicode",
     "github.vscode-pull-request-github",
-    "eamodio.gitlens",
-    "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode",
-    "bierner.lit-html",
-    "runem.lit-plugin",
-    "auchenberg.vscode-browser-preview",
-    "davidanson.vscode-markdownlint",
-    "redhat.vscode-yaml",
-    "oderwat.indent-rainbow"
+    "ryanluker.vscode-coverage-gutters",
+    "ms-python.vscode-pylance"
+    // "eamodio.gitlens",
+    // "dbaeumer.vscode-eslint",
+    // "esbenp.prettier-vscode",
+    // "bierner.lit-html",
+    // "runem.lit-plugin",
+    // "auchenberg.vscode-browser-preview",
+    // "davidanson.vscode-markdownlint",
+    // "redhat.vscode-yaml",
+    // "oderwat.indent-rainbow"
   ],
 }
