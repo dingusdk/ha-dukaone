@@ -1,34 +1,35 @@
 """Config flow for Duka One integration."""
-from dukaonesdk.dukaclient import DukaClient
 import logging
 import voluptuous as vol
 
-from homeassistant import config_entries, core, exceptions
+from homeassistant import config_entries, exceptions
 from homeassistant.const import (
     CONF_DEVICE_ID,
     CONF_IP_ADDRESS,
     CONF_NAME,
-    CONF_PASSWORD
+    CONF_PASSWORD,
 )
 from homeassistant.helpers.typing import HomeAssistantType
 
-from .const import DOMAIN, CONF_STATICIP  # pylint:disable=unused-import
+from .const import DOMAIN, CONF_STATICIP
 from . import DukaEntityComponent
 
 _LOGGER = logging.getLogger(__name__)
 
-DATA_SCHEMA = vol.Schema({
-    vol.Required(CONF_NAME) : str,
-    vol.Required(CONF_DEVICE_ID) : str,
-    vol.Optional(CONF_PASSWORD, default='1111'): str,
-    vol.Optional(CONF_IP_ADDRESS, default=''): str,
-    vol.Optional(CONF_STATICIP, default = True): bool,
+DATA_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_NAME): str,
+        vol.Required(CONF_DEVICE_ID): str,
+        vol.Optional(CONF_PASSWORD, default="1111"): str,
+        vol.Optional(CONF_IP_ADDRESS, default=""): str,
+        vol.Optional(CONF_STATICIP, default=True): bool,
     }
 )
 
+
 def dovalidate(hass: HomeAssistantType, user_input):
 
-    if not DOMAIN in hass.data:
+    if DOMAIN not in hass.data:
         hass.data[DOMAIN] = DukaEntityComponent(hass)
     component: DukaEntityComponent = hass.data[DOMAIN]
 
@@ -56,8 +57,12 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
         if user_input is not None:
             try:
-                await self.hass.async_add_executor_job( dovalidate, self.hass, user_input)
-                return self.async_create_entry(title=user_input[CONF_NAME], data=user_input)
+                await self.hass.async_add_executor_job(
+                    dovalidate, self.hass, user_input
+                )
+                return self.async_create_entry(
+                    title=user_input[CONF_NAME], data=user_input
+                )
             except CannotConnect:
                 errors["base"] = "cannot_connect"
             except Exception:  # pylint: disable=broad-except
@@ -69,7 +74,5 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
 
-
 class CannotConnect(exceptions.HomeAssistantError):
     """Error to indicate we cannot connect."""
-

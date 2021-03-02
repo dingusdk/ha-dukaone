@@ -4,13 +4,12 @@ homeassistant:
   time_zone: Europe/Copenhagen
 
 frontend:
-  javascript_version: es5
 config:
 system_health:
 configurator:
 http:
 api:
 
-ptvsd:
-  wait: True # Set to True if you want hass to break and wait for debugger to attach
+# debugpy:
+#  wait: true
 

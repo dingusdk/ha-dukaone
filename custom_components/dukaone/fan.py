@@ -3,12 +3,9 @@ Platform for Duka One fan.
 
 see http://www.dingus.dk for more information
 """
-import asyncio
-import homeassistant.core as ha
 import logging
 import voluptuous as vol
 
-from homeassistant.components import fan
 from homeassistant.components.fan import (
     PLATFORM_SCHEMA,
     SPEED_HIGH,
@@ -20,7 +17,7 @@ from homeassistant.components.fan import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers import entity_platform
-from homeassistant.helpers.typing import ConfigType, HomeAssistantType
+from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.const import (
     ATTR_ENTITY_ID,
     CONF_DEVICE_ID,
@@ -31,7 +28,6 @@ from homeassistant.const import (
 import homeassistant.helpers.config_validation as cv
 
 from dukaonesdk.device import Device, Mode, Speed
-from dukaonesdk.dukaclient import DukaClient
 
 from . import DukaEntityComponent
 from .const import (
@@ -40,7 +36,8 @@ from .const import (
     DOMAIN,
     MODE_IN,
     MODE_INOUT,
-    MODE_OUT,SPEED_MANUAL
+    MODE_OUT,
+    SPEED_MANUAL,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -54,35 +51,14 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     }
 )
 
-VALID_MODE = vol.Any(
-    vol.All(vol.Coerce(int), vol.Clamp(min=0, max=2)),
-    cv.string
+VALID_MODE = vol.Any(vol.All(vol.Coerce(int), vol.Clamp(min=0, max=2)), cv.string)
+SET_MODE_SCHEMA = vol.Schema(
+    {vol.Required(ATTR_ENTITY_ID): cv.entity_ids, vol.Required(ATTR_MODE): VALID_MODE}
 )
-SET_MODE_SCHEMA = vol.Schema({
-    vol.Required(ATTR_ENTITY_ID): cv.entity_ids,
-    vol.Required(ATTR_MODE): VALID_MODE
-})
-RESET_FILTER_TIMER_SCHEMA = vol.Schema({
-    vol.Required(ATTR_ENTITY_ID): cv.entity_ids
-})
-SET_MANUAL_SPEED_SCHEMA = vol.Schema({
-    vol.Required(ATTR_ENTITY_ID): cv.entity_ids,
-    vol.Required(ATTR_MANUAL_SPEED): int
-})
-
-
-
-async def async_setup_platform(
-    hass: HomeAssistantType, config: ConfigType, async_add_entities, discovery_info=None
-):
-    """Set up the dukaone platform."""
-
-    name = config[CONF_NAME]
-    device_id = config[CONF_DEVICE_ID]
-    password = config[CONF_PASSWORD]
-    ip_address = config[CONF_IP_ADDRESS]
-    dukaonefan = DukaOneFan(name,device_id, password, ip_address)
-    await async_add_entities([dukaonefan])
+RESET_FILTER_TIMER_SCHEMA = vol.Schema({vol.Required(ATTR_ENTITY_ID): cv.entity_ids})
+SET_MANUAL_SPEED_SCHEMA = vol.Schema(
+    {vol.Required(ATTR_ENTITY_ID): cv.entity_ids, vol.Required(ATTR_MANUAL_SPEED): int}
+)
 
 
 async def async_setup_entry(
@@ -94,27 +70,25 @@ async def async_setup_entry(
     device_id = entry.data[CONF_DEVICE_ID]
     password = entry.data[CONF_PASSWORD]
     ip_address = entry.data[CONF_IP_ADDRESS]
-    if ip_address is  None or len(ip_address) == 0:
+    if ip_address is None or len(ip_address) == 0:
         ip_address = "<broadcast>"
-    dukaonefan = DukaOneFan(name, device_id, password, ip_address)
+    dukaonefan = DukaOneFan(hass, name, device_id, password, ip_address)
     async_add_entities([dukaonefan], True)
 
     platform = entity_platform.current_platform.get()
+    platform.async_register_entity_service("set_mode", SET_MODE_SCHEMA, "set_mode")
     platform.async_register_entity_service(
-        "set_mode", SET_MODE_SCHEMA,"set_mode"
+        "reset_filter_timer", RESET_FILTER_TIMER_SCHEMA, "reset_filter_timer"
     )
     platform.async_register_entity_service(
-        "reset_filter_timer", RESET_FILTER_TIMER_SCHEMA,"reset_filter_timer"
-    )
-    platform.async_register_entity_service(
-        "set_manual_speed", SET_MANUAL_SPEED_SCHEMA,"set_manual_speed"
+        "set_manual_speed", SET_MANUAL_SPEED_SCHEMA, "set_manual_speed"
     )
 
 
 class DukaOneFan(FanEntity):
     """A Duka One  fan component."""
 
-    def __init__(self, name, device_id, password, ip_address):
+    def __init__(self, hass: HomeAssistantType, name, device_id, password, ip_address):
         """Initialize the Duka One fan."""
         self._state = False
         self._speed = None
@@ -123,18 +97,17 @@ class DukaOneFan(FanEntity):
         self._device_id = device_id
         self._password = password
         self._ip_address = ip_address
-        self._device : Device = None
+        self._device: Device = None
         self._supported_features = SUPPORT_SET_SPEED
-        if self._ip_address is not None and  len(self._ip_address) == 0:
+        if self._ip_address is not None and len(self._ip_address) == 0:
             self._ip_address = None
-
-    async def async_added_to_hass(self):
-        """Make the duka one device."""
-        if self.the_client.get_device( self._device_id) is None:
+        component: DukaEntityComponent = hass.data[DOMAIN]
+        self.the_client = component.the_client
+        self._device = self.the_client.get_device(self._device_id)
+        if self._device is None:
             self._device = self.the_client.add_device(
                 self._device_id, self._password, self._ip_address, self.OnChange
             )
-        return
 
     def OnChange(self, device: Device):
         """Callback when the duka one change state"""
@@ -148,12 +121,8 @@ class DukaOneFan(FanEntity):
             self._speed = SPEED_MANUAL
         else:
             self._speed = SPEED_OFF
-        self._state = ((int)(device.speed)) != 0
-        modeswitch = {
-            Mode.ONEWAY: MODE_OUT,
-            Mode.TWOWAY : MODE_INOUT,
-            Mode.IN: MODE_IN
-        }
+        self._state = device.speed != Speed.OFF
+        modeswitch = {Mode.ONEWAY: MODE_OUT, Mode.TWOWAY: MODE_INOUT, Mode.IN: MODE_IN}
         self._mode = modeswitch.get(device.mode, MODE_INOUT)
         self.schedule_update_ha_state()
         return
@@ -162,11 +131,6 @@ class DukaOneFan(FanEntity):
         """Unsubscribe when removed."""
         self._device = self.the_client.remove_device(self._device)
         return
-
-    @property
-    def the_client(self):
-        component: DukaEntityComponent = self.hass.data[DOMAIN]
-        return component.the_client
 
     @property
     def name(self):
@@ -209,8 +173,9 @@ class DukaOneFan(FanEntity):
         return {
             "mode": self.mode,
             "filter_alarm": self._device.filter_alarm,
-            "filter_timer": self._device.filter_timer
-            }
+            "filter_timer": self._device.filter_timer,
+            "humidity": self._device.humidity,
+        }
 
     @property
     def speed(self):
@@ -280,10 +245,9 @@ class DukaOneFan(FanEntity):
         """Return device information."""
         info = {
             "name": "DukaOne",
-            "identifiers": { (DOMAIN, self.unique_id) },
+            "identifiers": {(DOMAIN, self._device_id)},
             "manufacturer": "Duka Ventilation",
-            "model": "Duke One S6W",
+            "model": f"Type {self._device.unit_type}",
+            "sw_version": f"{self._device.firmware_version} {self._device.firmware_date}",
         }
         return info
-
-
