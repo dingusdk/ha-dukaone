@@ -124,7 +124,8 @@ class DukaOneFan(FanEntity):
         self._state = device.speed != Speed.OFF
         modeswitch = {Mode.ONEWAY: MODE_OUT, Mode.TWOWAY: MODE_INOUT, Mode.IN: MODE_IN}
         self._mode = modeswitch.get(device.mode, MODE_INOUT)
-        self.schedule_update_ha_state()
+        if self.hass is not None:
+            self.schedule_update_ha_state()
         return
 
     async def async_will_remove_from_hass(self):
