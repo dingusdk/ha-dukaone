@@ -12,6 +12,7 @@ from homeassistant.components.fan import (
     SPEED_LOW,
     SPEED_MEDIUM,
     SPEED_OFF,
+    SUPPORT_PRESET_MODE,
     SUPPORT_SET_SPEED,
     FanEntity,
 )
@@ -98,7 +99,8 @@ class DukaOneFan(FanEntity):
         self._password = password
         self._ip_address = ip_address
         self._device: Device = None
-        self._supported_features = SUPPORT_SET_SPEED
+        self._attr_percentage = 0
+        self._supported_features = SUPPORT_SET_SPEED | SUPPORT_PRESET_MODE
         if self._ip_address is not None and len(self._ip_address) == 0:
             self._ip_address = None
         component: DukaEntityComponent = hass.data[DOMAIN]
@@ -124,6 +126,8 @@ class DukaOneFan(FanEntity):
         self._state = device.speed != Speed.OFF
         modeswitch = {Mode.ONEWAY: MODE_OUT, Mode.TWOWAY: MODE_INOUT, Mode.IN: MODE_IN}
         self._mode = modeswitch.get(device.mode, MODE_INOUT)
+        if device.manualspeed is not None:
+            self._attr_percentage = int( device.manualspeed *100 / 255)
         if self.hass is not None:
             self.schedule_update_ha_state()
         return
@@ -169,12 +173,21 @@ class DukaOneFan(FanEntity):
         return self._supported_features
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes."""
+        nicetime:str = ""
+        if ( self._device.filter_timer is not None):
+            timeinmin : int = self._device.filter_timer
+            days : int = int( timeinmin/60/24)
+            timeinmin -= days * 60*24
+            hours : int = int( timeinmin / 60)
+            timeinmin -= hours * 60
+            nicetime = f"{days}d {str(hours).zfill(2)}:{str(timeinmin).zfill(2)}"
         return {
             "mode": self.mode,
             "filter_alarm": self._device.filter_alarm,
             "filter_timer": self._device.filter_timer,
+            "filter_timer_nice": nicetime,
             "humidity": self._device.humidity,
         }
 
@@ -184,10 +197,7 @@ class DukaOneFan(FanEntity):
         return self._speed
 
     def set_speed(self, speed: str) -> None:
-        """Set the speed of the fan.
-
-        This method is a coroutine.
-        """
+        """Set the speed of the fan."""
         if speed == SPEED_HIGH:
             self.the_client.set_speed(self._device, Speed.HIGH)
         elif speed == SPEED_MEDIUM:
@@ -198,6 +208,14 @@ class DukaOneFan(FanEntity):
             self.the_client.set_speed(self._device, Speed.OFF)
         elif speed == SPEED_MANUAL:
             self.the_client.set_speed(self._device, Speed.MANUAL)
+
+    def set_percentage(self, percentage: int) -> None:
+        """Set the speed of the fan, as a percentage."""
+        self.set_manual_speed( int(percentage*255/100))
+
+    def set_preset_mode(self, preset_mode: str) -> None:
+        """Set new preset mode."""
+        self.set_speed( preset_mode)
 
     @property
     def mode(self):
