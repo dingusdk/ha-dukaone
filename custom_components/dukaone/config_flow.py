@@ -28,7 +28,7 @@ DATA_SCHEMA = vol.Schema(
 
 
 def dovalidate(hass: HomeAssistantType, user_input):
-
+    """Validate if we can connect to the device"""
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = DukaEntityComponent(hass)
     component: DukaEntityComponent = hass.data[DOMAIN]

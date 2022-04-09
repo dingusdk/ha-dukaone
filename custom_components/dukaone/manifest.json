@@ -8,7 +8,7 @@
     "fan"
   ],
   "domain": "dukaone",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "homeassistant": "0.110.0",
   "name": "Duka One",
   "config_flow": true,
@@ -17,6 +17,6 @@
   "homekit": {},
   "documentation": "https://www.dingus.dk",
   "requirements": [
-    "dukaonesdk==1.0.3"
+    "dukaonesdk==1.0.4"
   ]
 }

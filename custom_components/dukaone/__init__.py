@@ -10,7 +10,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_component import EntityComponent
 
-from dukaonesdk.dukaclient import DukaClient
+from dukaonesdk.dukaclient import DukaClient, Device
 
 from .const import DOMAIN
 
@@ -54,7 +54,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 
 class DukaEntityComponent(EntityComponent):
-    """ We only want to have one instance of the dukaclient."""
+    """We only want to have one instance of the dukaclient."""
 
     def __init__(self, hass):
         super(DukaEntityComponent, self).__init__(_LOGGER, DOMAIN, hass)
@@ -62,6 +62,7 @@ class DukaEntityComponent(EntityComponent):
 
     @property
     def the_client(self) -> DukaClient:
+        """Get the duka one client."""
         if self._the_client is None:
             self._the_client = DukaClient()
         return self._the_client

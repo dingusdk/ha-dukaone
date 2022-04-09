@@ -1,7 +1,18 @@
 {
-    "python.formatting.provider": "black",
-    "python.pythonPath": "/usr/bin/python3",
-    "files.associations": {
-        "*.yaml": "home-assistant"
-    }
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.formatOnSave": true,
+  "python.formatting.provider": "black",
+  "python.linting.flake8Enabled": false,
+  "python.linting.flake8Args": ["--max-line-length=120"],
+  "python.linting.enabled": true,
+  "python.linting.pydocstyleEnabled": false,
+  "python.linting.pydocstyleArgs": ["--max-line-length=120"],
+  "python.linting.pylintEnabled": true,
+  "python.linting.pycodestyleEnabled": false,
+  "python.linting.pycodestyleArgs": ["--max-line-length=120"],
+  "python.pythonPath": "/usr/bin/python3",
+  "files.associations": {
+    "*.yaml": "home-assistant"
+  }
 }

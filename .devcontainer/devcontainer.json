@@ -1,6 +1,6 @@
 {
   "name": "DukaOne",
-  "image": "ludeeus/container:integration",
+  "image": "ghcr.io/ludeeus/devcontainer/integration:stable",
   "context": "..",
   "postCreateCommand": "",
   "runArgs": [],
@@ -25,15 +25,15 @@
     "ms-python.python",
     "github.vscode-pull-request-github",
     "ryanluker.vscode-coverage-gutters",
-    "ms-python.vscode-pylance"
+    "ms-python.vscode-pylance",
     // "eamodio.gitlens",
     // "dbaeumer.vscode-eslint",
-    // "esbenp.prettier-vscode",
+    "esbenp.prettier-vscode",
     // "bierner.lit-html",
     // "runem.lit-plugin",
     // "auchenberg.vscode-browser-preview",
-    // "davidanson.vscode-markdownlint",
-    // "redhat.vscode-yaml",
+    "davidanson.vscode-markdownlint",
+    "redhat.vscode-yaml",
     // "oderwat.indent-rainbow"
   ],
 }

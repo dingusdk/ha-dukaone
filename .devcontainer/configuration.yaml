@@ -10,6 +10,10 @@ configurator:
 http:
 api:
 
-# debugpy:
+#debugpy:
 #  wait: true
 
+logger:
+  default: warning
+  logs:
+    custom_components.dukaone: debug
