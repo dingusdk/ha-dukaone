@@ -11,4 +11,8 @@ MODE_IN = "in"
 MODE_OUT = "out"
 MODE_INOUT = "inout"
 
+SPEED_HIGH = "high"
+SPEED_LOW = "low"
 SPEED_MANUAL = "manual"
+SPEED_MEDIUM = "medium"
+SPEED_OFF = "off"

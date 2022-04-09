@@ -38,6 +38,7 @@ class DukaEntity:
         timeout = time.time() + 10
         while self.device is None or self.device.firmware_version is None:
             if time.time() > timeout:
+                _LOGGER.warning("Timeout getting dukaone firmware version")
                 return False
             await asyncio.sleep(0.1)
         return True

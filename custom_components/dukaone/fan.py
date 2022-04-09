@@ -10,10 +10,6 @@ import voluptuous as vol
 
 from homeassistant.components.fan import (
     PLATFORM_SCHEMA,
-    SPEED_HIGH,
-    SPEED_LOW,
-    SPEED_MEDIUM,
-    SPEED_OFF,
     SUPPORT_PRESET_MODE,
     SUPPORT_SET_SPEED,
     FanEntity,
@@ -38,7 +34,11 @@ from .const import (
     MODE_IN,
     MODE_INOUT,
     MODE_OUT,
+    SPEED_HIGH,
     SPEED_MANUAL,
+    SPEED_MEDIUM,
+    SPEED_LOW,
+    SPEED_OFF,
 )
 from .dukaentity import DukaEntity
 

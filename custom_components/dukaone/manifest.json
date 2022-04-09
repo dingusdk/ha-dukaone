@@ -8,14 +8,14 @@
     "fan"
   ],
   "domain": "dukaone",
-  "version": "1.0.5",
-  "homeassistant": "0.110.0",
+  "version": "1.0.6",
+  "homeassistant": "2022.4.0",
   "name": "Duka One",
   "config_flow": true,
   "ssdp": [],
   "zeroconf": [],
   "homekit": {},
-  "documentation": "https://www.dingus.dk",
+  "documentation": "https://github.com/dingusdk/ha-dukaone",
   "requirements": [
     "dukaonesdk==1.0.4"
   ]
