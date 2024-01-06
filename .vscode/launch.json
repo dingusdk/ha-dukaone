@@ -1,19 +1,15 @@
 {
-  "version": "0.2.0",
-  "configurations": [
-      {
-          // Example of attaching to local debug server running on WSL
-          "name": "Python: Attach Local",
-          "type": "python",
-          "request": "attach",
-          "port": 5678,
-          "host": "localhost",
-          "pathMappings": [
-              {
-                  "localRoot": "G:\\Dev\\python\\homeassistant\\dingus-dukaone",
-                  "remoteRoot": "/mnt/g/Dev/python/homeassistant/dingus-dukaone"
-              }
-          ],
-      },
-  ]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Home Assistant",
+            "type": "python",
+            "request": "launch",
+            "program": "/usr/local/python/bin/hass",
+            "args": [
+                "-c",
+                "${workspaceFolder}/.config"
+            ]
+        }
+    ]
 }
