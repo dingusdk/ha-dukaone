@@ -1,39 +1,42 @@
 {
   "name": "DukaOne",
-  "image": "ghcr.io/ludeeus/devcontainer/integration:stable",
-  "context": "..",
-  "postCreateCommand": "",
-  "runArgs": [],
+  "image": "mcr.microsoft.com/devcontainers/python:0-3.11",
+  "workspaceFolder": "/workspaces/dingus-dukaone",
+  "runArgs": [
+    "--network=host"
+  ],
+  "forwardPorts": [],
   "appPort": [
-    "4000:4000/udp",
-    "4001:4001/udp",
-    "8123:8123"
+    //   "4000:4000/udp",
+    //   "4001:4001/udp",
+    //   "8123:8123"
   ],
-  "settings": {
-    "files.eol": "\n",
-    "editor.tabSize": 2,
-    "terminal.integrated.shell.linux": "/bin/bash",
-    "editor.formatOnPaste": false,
-    "editor.formatOnSave": false,
-    "editor.formatOnType": true,
-    "files.trimTrailingWhitespace": true,
-    "yaml.customTags": [
-      "!secret scalar"
-    ]
+  "updateContentCommand": {
+    "requirements": "pip3 install homeassistant"
   },
-  "extensions": [
-    "ms-python.python",
-    "github.vscode-pull-request-github",
-    "ryanluker.vscode-coverage-gutters",
-    "ms-python.vscode-pylance",
-    // "eamodio.gitlens",
-    // "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode",
-    // "bierner.lit-html",
-    // "runem.lit-plugin",
-    // "auchenberg.vscode-browser-preview",
-    "davidanson.vscode-markdownlint",
-    "redhat.vscode-yaml",
-    // "oderwat.indent-rainbow"
-  ],
+  "postStartCommand": {
+    "link_component": "ln -sf /workspaces/dingus-dukaone/custom_components/ /workspaces/dingus-dukaone/.config/",
+    "link_config": "ln -sf /workspaces/dingus-dukaone/.devcontainer/configuration.yaml  /workspaces/dingus-dukaone/.config/"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "files.eol": "\n",
+        "editor.tabSize": 2,
+        "editor.formatOnPaste": false,
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "files.trimTrailingWhitespace": true,
+        "yaml.customTags": [
+          "!secret scalar"
+        ]
+      }
+    },
+    "extensions": [
+      "ms-python.python",
+      "github.vscode-pull-request-github",
+      "ryanluker.vscode-coverage-gutters",
+      "ms-python.vscode-pylance"
+    ]
+  }
 }
