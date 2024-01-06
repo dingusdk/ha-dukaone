@@ -29,7 +29,7 @@ async def async_setup_entry(
     device_id = entry.data[CONF_DEVICE_ID]
     dukaonesensor = DukaOneHumidity(hass, name, device_id)
     if not await dukaonesensor.wait_for_device_to_be_ready():
-        _LOGGER.error("Failed to setupup dukaone device")
+        _LOGGER.error("Failed to setup dukaone device")
         return False
     async_add_entities([dukaonesensor], True)
 
