@@ -10,8 +10,7 @@ import voluptuous as vol
 
 from homeassistant.components.fan import (
     PLATFORM_SCHEMA,
-    SUPPORT_PRESET_MODE,
-    SUPPORT_SET_SPEED,
+    FanEntityFeature,
     FanEntity,
 )
 from homeassistant.config_entries import ConfigEntry
@@ -96,7 +95,7 @@ class DukaOneFan(FanEntity, DukaEntity):
         self._mode: Mode = None
         self._name = name
         self._attr_percentage = None
-        self._supported_features = SUPPORT_SET_SPEED | SUPPORT_PRESET_MODE
+        self._supported_features = (FanEntityFeature.SET_SPEED | FanEntityFeature.PRESET_MODE)
         self._attr_preset_mode = None
         self._attr_preset_modes = [
             SPEED_OFF,
