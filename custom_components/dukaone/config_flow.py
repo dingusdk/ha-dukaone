@@ -1,4 +1,5 @@
 """Config flow for Duka One integration."""
+
 import logging
 import voluptuous as vol
 
@@ -9,7 +10,7 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_PASSWORD,
 )
-from homeassistant.helpers.typing import HomeAssistantType
+from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN, CONF_STATICIP
 from . import DukaEntityComponent
@@ -27,7 +28,7 @@ DATA_SCHEMA = vol.Schema(
 )
 
 
-def dovalidate(hass: HomeAssistantType, user_input):
+def dovalidate(hass: HomeAssistant, user_input):
     """Validate if we can connect to the device"""
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = DukaEntityComponent(hass)

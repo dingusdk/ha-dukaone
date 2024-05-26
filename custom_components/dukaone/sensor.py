@@ -3,17 +3,15 @@ Sensor platform for Duka One fan.
 
 see http://www.dingus.dk for more information
 """
+
 import asyncio
 import logging
 import time
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import (
-    CONF_DEVICE_ID,
-    CONF_NAME,
-)
+from homeassistant.const import CONF_DEVICE_ID, CONF_NAME
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
-from homeassistant.helpers.typing import HomeAssistantType
 
 from .dukaentity import DukaEntity
 
@@ -21,7 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities
 ) -> None:
     """Set up Duka One humidity sensor based on a config entry."""
 
@@ -37,7 +35,7 @@ async def async_setup_entry(
 class DukaOneHumidity(Entity, DukaEntity):
     """A Duka One humidity sensor entity."""
 
-    def __init__(self, hass: HomeAssistantType, name: str, device_id: str):
+    def __init__(self, hass: HomeAssistant, name: str, device_id: str):
         """Initialize the Duka One fan."""
         super(DukaOneHumidity, self).__init__(hass, device_id)
         self._name = name
