@@ -3,6 +3,7 @@ Platform for Duka One fan.
 
 see http://www.dingus.dk for more information
 """
+
 import asyncio
 import logging
 import time
@@ -15,7 +16,7 @@ from homeassistant.components.fan import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers import entity_platform
-from homeassistant.helpers.typing import HomeAssistantType
+from homeassistant.core import HomeAssistant
 from homeassistant.const import (
     ATTR_ENTITY_ID,
     CONF_DEVICE_ID,
@@ -62,7 +63,7 @@ SET_MANUAL_SPEED_SCHEMA = vol.Schema(
 
 
 async def async_setup_entry(
-    hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities
 ) -> None:
     """Set up Duka One based on a config entry."""
 
@@ -89,13 +90,15 @@ async def async_setup_entry(
 class DukaOneFan(FanEntity, DukaEntity):
     """A Duka One  fan component."""
 
-    def __init__(self, hass: HomeAssistantType, name, device_id, password, ip_address):
+    def __init__(self, hass: HomeAssistant, name, device_id, password, ip_address):
         """Initialize the Duka One fan."""
         super(DukaOneFan, self).__init__(hass, device_id)
         self._mode: Mode = None
         self._name = name
         self._attr_percentage = None
-        self._supported_features = (FanEntityFeature.SET_SPEED | FanEntityFeature.PRESET_MODE)
+        self._supported_features = (
+            FanEntityFeature.SET_SPEED | FanEntityFeature.PRESET_MODE
+        )
         self._attr_preset_mode = None
         self._attr_preset_modes = [
             SPEED_OFF,
