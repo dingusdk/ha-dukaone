@@ -14,6 +14,13 @@ from dukaonesdk.dukaclient import DukaClient, Device
 
 from .const import DOMAIN
 
+from homeassistant.const import Platform 
+
+PLATFORMS = [
+    Platform.FAN,
+    Platform.SENSOR,
+] 
+
 _LOGGER = logging.getLogger(__name__)
 
 CONFIG_SCHEMA = vol.Schema({DOMAIN: vol.Schema({})}, extra=vol.ALLOW_EXTRA)
@@ -30,10 +37,7 @@ def setup(hass: HomeAssistant, config: dict):
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up Duka One from a config entry."""
 
-    hass.async_create_task(hass.config_entries.async_forward_entry_setup(entry, "fan"))
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(entry, "sensor")
-    )
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
 
