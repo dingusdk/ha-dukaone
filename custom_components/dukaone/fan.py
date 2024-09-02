@@ -97,7 +97,7 @@ class DukaOneFan(FanEntity, DukaEntity):
         self._name = name
         self._attr_percentage = None
         self._supported_features = (
-            FanEntityFeature.SET_SPEED | FanEntityFeature.PRESET_MODE
+            FanEntityFeature.SET_SPEED | FanEntityFeature.PRESET_MODE | FanEntityFeature.TURN_ON | FanEntityFeature.TURN_OFF
         )
         self._attr_preset_mode = None
         self._attr_preset_modes = [
