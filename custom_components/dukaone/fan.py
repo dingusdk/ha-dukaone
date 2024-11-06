@@ -25,6 +25,7 @@ from homeassistant.const import (
     CONF_PASSWORD,
 )
 import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.config_validation import make_entity_service_schema
 
 from dukaonesdk.device import Device, Mode, Speed
 
@@ -53,11 +54,13 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 )
 
 VALID_MODE = vol.Any(vol.All(vol.Coerce(int), vol.Clamp(min=0, max=2)), cv.string)
-SET_MODE_SCHEMA = vol.Schema(
+SET_MODE_SCHEMA = make_entity_service_schema(
     {vol.Required(ATTR_ENTITY_ID): cv.entity_ids, vol.Required(ATTR_MODE): VALID_MODE}
 )
-RESET_FILTER_TIMER_SCHEMA = vol.Schema({vol.Required(ATTR_ENTITY_ID): cv.entity_ids})
-SET_MANUAL_SPEED_SCHEMA = vol.Schema(
+RESET_FILTER_TIMER_SCHEMA = make_entity_service_schema(
+    {vol.Required(ATTR_ENTITY_ID): cv.entity_ids}
+)
+SET_MANUAL_SPEED_SCHEMA = make_entity_service_schema(
     {vol.Required(ATTR_ENTITY_ID): cv.entity_ids, vol.Required(ATTR_MANUAL_SPEED): int}
 )
 
@@ -97,7 +100,10 @@ class DukaOneFan(FanEntity, DukaEntity):
         self._name = name
         self._attr_percentage = None
         self._supported_features = (
-            FanEntityFeature.SET_SPEED | FanEntityFeature.PRESET_MODE | FanEntityFeature.TURN_ON | FanEntityFeature.TURN_OFF
+            FanEntityFeature.SET_SPEED
+            | FanEntityFeature.PRESET_MODE
+            | FanEntityFeature.TURN_ON
+            | FanEntityFeature.TURN_OFF
         )
         self._attr_preset_mode = None
         self._attr_preset_modes = [
