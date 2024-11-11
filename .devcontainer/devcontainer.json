@@ -1,7 +1,7 @@
 {
   "name": "DukaOne",
-  "image": "mcr.microsoft.com/devcontainers/python:0-3.11",
-  "workspaceFolder": "/workspaces/dingus-dukaone",
+  "image": "mcr.microsoft.com/devcontainers/python:dev-3.12-bookworm",
+  "workspaceFolder": "/workspaces/ha-dukaone",
   "runArgs": [
     "--network=host"
   ],
@@ -15,8 +15,8 @@
     "requirements": "pip3 install homeassistant"
   },
   "postStartCommand": {
-    "link_component": "ln -sf /workspaces/dingus-dukaone/custom_components/ /workspaces/dingus-dukaone/.config/",
-    "link_config": "ln -sf /workspaces/dingus-dukaone/.devcontainer/configuration.yaml  /workspaces/dingus-dukaone/.config/"
+    "link_component": "ln -sf /workspaces/ha-dukaone/custom_components/ /workspaces/ha-dukaone/.config/",
+    "link_config": "ln -sf /workspaces/ha-dukaone/.devcontainer/configuration.yaml  /workspaces/ha-dukaone/.config/"
   },
   "customizations": {
     "vscode": {
