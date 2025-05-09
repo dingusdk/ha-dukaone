@@ -17,6 +17,6 @@
   "homekit": {},
   "documentation": "https://github.com/dingusdk/ha-dukaone",
   "requirements": [
-    "dukaonesdk==1.0.4"
+    "dukaonesdk==1.0.5"
   ]
 }
