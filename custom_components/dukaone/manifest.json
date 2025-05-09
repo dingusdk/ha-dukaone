@@ -8,7 +8,7 @@
     "fan"
   ],
   "domain": "dukaone",
-  "version": "2024.11.0",
+  "version": "2025.05.0",
   "homeassistant": "2024.1.0",
   "name": "Duka One",
   "config_flow": true,
