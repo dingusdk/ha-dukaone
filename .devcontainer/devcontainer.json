@@ -1,6 +1,6 @@
 {
   "name": "DukaOne",
-  "image": "mcr.microsoft.com/devcontainers/python:dev-3.12-bookworm",
+  "image": "mcr.microsoft.com/devcontainers/python:dev-3.14-bookworm",
   "workspaceFolder": "/workspaces/ha-dukaone",
   "runArgs": [
     "--network=host"
