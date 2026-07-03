@@ -145,6 +145,12 @@ class DukaOneFan(FanEntity, DukaEntity):
             and newmode == self._mode
             and newpercentage == self._attr_percentage
         ):
+            _LOGGER.debug(
+                "No changes, update not needed, mode(%s), speed(%s), percentage(%s)",
+                self._mode,
+                self._attr_preset_mode,
+                self._attr_percentage,
+            )
             return
         self._mode = newmode
         self._attr_percentage = newpercentage
@@ -193,7 +199,13 @@ class DukaOneFan(FanEntity, DukaEntity):
     def extra_state_attributes(self):
         """Return the state attributes."""
         if self.device is None or not self.device.is_initialized():
-            return {}
+            return {
+                "mode": None,
+                "filter_alarm": None,
+                "filter_timer": None,
+                "filter_timer_nice": None,
+                "humidity": None,
+            }
         nicetime: str = ""
         if self.device.filter_timer is not None:
             timeinmin: int = self.device.filter_timer

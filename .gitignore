@@ -1,3 +1,4 @@
 .devcontainer/secrets.yaml
 __pycache__
 .config
+www
