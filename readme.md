@@ -12,7 +12,47 @@ To add a duka one to Home assistant go to configuration|Integrations and click t
 
 In the dialog enter a name for the device and the device id. You can find the device id in the mobile app for Duka One. If you know the IP of the device you can enter it. Or you can enter the broardcast address of your subnet (like 192.168.0.255). You can also leave it empty and the integration will try to broadcast and find the device. (Note this does not always works - depending on you network and Home Assistant setup). 
 
-## License
+# Extra device attributes
+
+The extra attributes below are added to the dukaone device in Home Assistant
+
+### Mode
+
+The ventilation mode of the device
+
+* in
+* out
+* inout
+
+### Filer alarm
+
+Set to tru if the fliter needs to be changed
+
+### Filter timer
+
+The time in seconds until the filter need to be changed.
+Can be used to give you a notification in Home Assistant when the dokaone device need to be cleaned and have the filers changed
+
+### Filter timer nice
+
+The same as the above filter alarm timer but in a nice format to display like 12d 15:47
+(days minutes:seconds)
+
+### Humidity
+
+The humidity in percent
+
+# Actions
+
+The dukaone integration provide these actions:
+
+* set_mode
+* set_manual_speed
+* reset_filter_timer
+
+See the developer tools|Actions for parameters for each action.
+
+# License
 
 HA-DukeOne is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
