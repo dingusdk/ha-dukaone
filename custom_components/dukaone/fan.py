@@ -117,7 +117,9 @@ class DukaOneFan(FanEntity, DukaEntity):
 
     async def async_will_remove_from_hass(self):
         """Unsubscribe when removed."""
-        self.device = self.the_client.remove_device(self.device)
+        if self.device is not None:
+            self.the_client.remove_device(self.device.device_id)
+        self.device = None
         return
 
     def on_change(self, device: Device):
@@ -198,7 +200,7 @@ class DukaOneFan(FanEntity, DukaEntity):
     @property
     def extra_state_attributes(self):
         """Return the state attributes."""
-        if self.device is None or not self.device.is_initialized():
+        if self.device is None:
             return {
                 "mode": None,
                 "filter_alarm": None,
