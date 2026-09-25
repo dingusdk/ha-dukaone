@@ -40,7 +40,7 @@ class DukaOneHumidity(Entity, DukaEntity):
         super(DukaOneHumidity, self).__init__(hass, device_id)
         self._name = name
 
-    async def wait_for_device_to_be_ready(self):
+    async def wait_for_device_to_be_ready(self) -> bool:
         """Wait for the device to be initialized.
 
         Then wait until the first humidity command has been received"""
@@ -51,16 +51,20 @@ class DukaOneHumidity(Entity, DukaEntity):
             if self.device is not None:
                 break
             if time.time() > timeout:
+                _LOGGER.warning(
+                    "Timeout waiting for humidity from dukaone device")
                 return False
             await asyncio.sleep(0.1)
         _LOGGER.debug("Waiting for dukaone sensor device")
+
         if not await super(DukaOneHumidity, self).wait_for_device_to_be_ready():
             return False
         _LOGGER.debug("Waiting for dukaone humidity sensor")
         timeout = time.time() + 10
         while self.device is None or self.device.humidity is None:
             if time.time() > timeout:
-                _LOGGER.warning("Timeout waiting for humidity reply")
+                _LOGGER.warning(
+                    "Timeout waiting for humidity reply. Continuing without.")
                 return False
             await asyncio.sleep(0.1)
         return True
@@ -88,6 +92,8 @@ class DukaOneHumidity(Entity, DukaEntity):
     @property
     def state(self):
         """Return the state of the sensor."""
+        if self.device is None:
+            return None
         return self.device.humidity
 
     @property
