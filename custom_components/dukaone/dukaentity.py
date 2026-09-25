@@ -3,7 +3,6 @@
 import asyncio
 import logging
 import time
-from xmlrpc.client import boolean
 
 from dukaonesdk.device import Device
 from dukaonesdk.dukaclient import DukaClient
@@ -33,16 +32,24 @@ class DukaEntity:
             ip_address,
             self.on_change,
         )
+        _LOGGER.debug("Dukaone device added")
 
-    async def wait_for_device_to_be_ready(self) -> boolean:
+    async def wait_for_device_to_be_ready(self) -> bool:
         """Wait for the device to reponse to the initial get firmware version command."""
-        timeout = time.time() + 10
-        while self.device is None or self.device.firmware_version is None:
+
+        _LOGGER.debug("Waiting for dukaone device to be added.")
+        # self.device is set by the initialize_device above running async
+        # we need to wait for it. It must run async because it sends a
+        # packet to the device.
+        # The wait_for_initialize_async wait for the response
+        timeout = time.time() + 5
+        while self.device is None:
             if time.time() > timeout:
-                _LOGGER.warning("Timeout getting dukaone firmware version")
+                _LOGGER.warning("Timeout adding dukaone device")
                 return False
             await asyncio.sleep(0.1)
-        return True
+        _LOGGER.debug("Waiting for dukaone device to reply.")
+        return await self.the_client.wait_for_initialize_async(self.device)
 
     def on_change(self, device: Device):
         """Callback whe dukaone has changes - must be implemented in derived class"""
