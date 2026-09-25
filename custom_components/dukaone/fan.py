@@ -53,15 +53,18 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     }
 )
 
-VALID_MODE = vol.Any(vol.All(vol.Coerce(int), vol.Clamp(min=0, max=2)), cv.string)
+VALID_MODE = vol.Any(
+    vol.All(vol.Coerce(int), vol.Clamp(min=0, max=2)), cv.string)
 SET_MODE_SCHEMA = make_entity_service_schema(
-    {vol.Required(ATTR_ENTITY_ID): cv.entity_ids, vol.Required(ATTR_MODE): VALID_MODE}
+    {vol.Required(ATTR_ENTITY_ID): cv.entity_ids,
+     vol.Required(ATTR_MODE): VALID_MODE}
 )
 RESET_FILTER_TIMER_SCHEMA = make_entity_service_schema(
     {vol.Required(ATTR_ENTITY_ID): cv.entity_ids}
 )
 SET_MANUAL_SPEED_SCHEMA = make_entity_service_schema(
-    {vol.Required(ATTR_ENTITY_ID): cv.entity_ids, vol.Required(ATTR_MANUAL_SPEED): int}
+    {vol.Required(ATTR_ENTITY_ID): cv.entity_ids,
+     vol.Required(ATTR_MANUAL_SPEED): int}
 )
 
 
@@ -78,7 +81,8 @@ async def async_setup_entry(
         ip_address = "<broadcast>"
 
     platform = entity_platform.current_platform.get()
-    platform.async_register_entity_service("set_mode", SET_MODE_SCHEMA, "set_mode")
+    platform.async_register_entity_service(
+        "set_mode", SET_MODE_SCHEMA, "set_mode")
     platform.async_register_entity_service(
         "reset_filter_timer", RESET_FILTER_TIMER_SCHEMA, "reset_filter_timer"
     )
@@ -113,11 +117,14 @@ class DukaOneFan(FanEntity, DukaEntity):
             SPEED_HIGH,
             SPEED_MANUAL,
         ]
-        hass.async_add_executor_job(self.initialize_device, password, ip_address)
+        hass.async_add_executor_job(
+            self.initialize_device, password, ip_address)
 
     async def async_will_remove_from_hass(self):
         """Unsubscribe when removed."""
-        self.device = self.the_client.remove_device(self.device)
+        if self.device is not None:
+            self.the_client.remove_device(self.device.device_id)
+        self.device = None
         return
 
     def on_change(self, device: Device):
@@ -137,7 +144,8 @@ class DukaOneFan(FanEntity, DukaEntity):
             newspeed = SPEED_MANUAL
             if device.manualspeed is not None:
                 newpercentage = int(round(device.manualspeed * 100 / 255))
-        modeswitch = {Mode.ONEWAY: MODE_OUT, Mode.TWOWAY: MODE_INOUT, Mode.IN: MODE_IN}
+        modeswitch = {Mode.ONEWAY: MODE_OUT,
+                      Mode.TWOWAY: MODE_INOUT, Mode.IN: MODE_IN}
         newmode = modeswitch.get(device.mode, MODE_INOUT)
         # Are there any changes?
         if (
