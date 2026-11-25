@@ -34,6 +34,19 @@ class DukaEntity:
         )
         _LOGGER.debug("Dukaone device added")
 
+    async def wait_for_device_to_be_ready(self) -> boolean:
+        """Wait for the device to reponse to the initial get firmware version command.
+
+        The firmware request is only sent once, from add_device(), and the
+        periodic status command never asks for it again. On installations with
+        several devices the requests are sent simultaneously over one shared
+        UDP socket, and a lost reply leaves firmware_version None forever -
+        which in turn hides mode, humidity and the filter timer behind the
+        is_initialized() gate in extra_state_attributes. Resend while waiting.
+        """
+        timeout = time.time() + 10
+        next_retry = time.time() + 1
+        while self.device is None or self.device.firmware_version is None:
     async def wait_for_device_to_be_ready(self) -> bool:
         """Wait for the device to reponse to the initial get firmware version command."""
 
@@ -47,6 +60,14 @@ class DukaEntity:
             if time.time() > timeout:
                 _LOGGER.warning("Timeout adding dukaone device")
                 return False
+            if self.device is not None and time.time() > next_retry:
+                self.the_client.add_device(
+                    self._device_id,
+                    self.device.password,
+                    self.device.ip_address,
+                    self.device._changeevent,
+                )
+                next_retry = time.time() + 1
             await asyncio.sleep(0.1)
         _LOGGER.debug("Waiting for dukaone device to reply.")
         return await self.the_client.wait_for_initialize_async(self.device)

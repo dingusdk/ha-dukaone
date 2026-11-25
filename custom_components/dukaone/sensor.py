@@ -56,6 +56,7 @@ class DukaOneHumidity(Entity, DukaEntity):
                 return False
             await asyncio.sleep(0.1)
         _LOGGER.debug("Waiting for dukaone sensor device")
+        await super(DukaOneHumidity, self).wait_for_device_to_be_ready()
 
         if not await super(DukaOneHumidity, self).wait_for_device_to_be_ready():
             return False
@@ -63,6 +64,8 @@ class DukaOneHumidity(Entity, DukaEntity):
         timeout = time.time() + 10
         while self.device is None or self.device.humidity is None:
             if time.time() > timeout:
+                _LOGGER.warning("Timeout waiting for humidity reply - continuing")
+                break
                 _LOGGER.warning(
                     "Timeout waiting for humidity reply. Continuing without.")
                 return False
